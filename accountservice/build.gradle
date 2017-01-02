@@ -1,0 +1,35 @@
+plugins {
+    id "org.echocat.golang" version "0.1.11"
+    id "co.riiid.gradle" version "0.4.2"
+}
+
+group 'github.com/callistaenterprise/gocadec/accountservice'
+
+golang {
+    // Set default platforms to build but make it overwritable via -Dplatforms=<..>
+    platforms = System.getProperty("platforms", "darwin-amd64,linux-amd64,windows-amd64")
+    dependencies {
+        build 'github.com/gorilla/mux'
+        build 'github.com/boltdb/bolt'
+        build 'github.com/spf13/viper'
+    }
+    build {
+        // Use temporary GOPATH to build everthing in
+        useTemporaryGopath = true
+    }
+}
+
+github {
+    owner = 'eriklupander'
+    repo = 'cadec2017'
+    token = 'abc'
+    tagName = '0.2.0'
+    targetCommitish = 'master'
+    name = 'v0.2.0'
+    body = """# Cadec 2017 - accountservice
+
+"""
+    assets = [
+            'release/**'
+    ]
+}

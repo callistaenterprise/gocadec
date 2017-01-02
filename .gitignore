@@ -1,0 +1,50 @@
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+*.o
+*.a
+*.so
+
+# Folders
+_obj
+_test
+
+# Architecture specific extensions/prefixes
+*.[568vq]
+[568vq].out
+
+*.cgo1.go
+*.cgo2.c
+_cgo_defun.c
+_cgo_gotypes.go
+_cgo_export.*
+
+_testmain.go
+
+*.exe
+*.test
+*.prof
+
+.DS_Store
+
+copyall.sh
+erik-cadec-kod.zip
+samples/
+
+accounts.db
+accountservice-*
+
+compositeservice
+compositeservice-*
+
+# eventservice
+eventservice-linux-amd64
+
+# imageservice
+imageservice/imageservice
+imageservice-*
+imageservice/testimages/bigdata.jpg
+imageservice/testimages/new2.jpg
+
+# securityservice
+# securityservice-*
+
+loadtest/loadtest
