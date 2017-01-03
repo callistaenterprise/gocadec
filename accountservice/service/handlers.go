@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"strconv"
 	"github.com/opentracing/opentracing-go"
-	"github.com/eriklupander/cloudtoolkit"
+	ct "github.com/eriklupander/cloudtoolkit"
 )
 
 /**
@@ -15,26 +15,26 @@ import (
 func GetAccount(w http.ResponseWriter, r *http.Request) {
 
 	// Extract tracing context, if possible
-	span := cloudtoolkit.StartHTTPTrace(r, "GetAccount")
+	span := ct.StartHTTPTrace(r, "GetAccount")
 	defer endSpan(span)
 
 	vars := mux.Vars(r)
 	var accountId = vars["accountId"]
-	cloudtoolkit.Log.Println("Getting account " + accountId)
+	ct.Log.Println("Getting account " + accountId)
 	account, err := QueryAccount(accountId, span)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(err.Error()))
 		return
 	}
-	cloudtoolkit.Log.Println("Done getting account " + account.Name)
+	ct.Log.Println("Done getting account " + account.Name)
 	// Enrich with IP of serving node
-	account.ServedBy = cloudtoolkit.GetLocalIP()
+	account.ServedBy = ct.GetLocalIP()
 	json, _ := json.Marshal(account)
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Content-Length", strconv.Itoa(len(json)))
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(json))
+	w.Write(json)
 }
 
 func endSpan(span opentracing.Span) {

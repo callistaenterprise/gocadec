@@ -32,8 +32,8 @@ samples/
 accounts.db
 accountservice-*
 
-compositeservice
-compositeservice-*
+compositeservice/compositeservice
+compositeservice/compositeservice-*
 
 # eventservice
 eventservice-linux-amd64

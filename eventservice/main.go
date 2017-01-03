@@ -27,12 +27,15 @@ import (
 	"fmt"
 	"log"
 	"github.com/streadway/amqp"
+	"time"
+	ct "github.com/eriklupander/cloudtoolkit"
 )
 
 var appName = "eventservice"
 
 func main() {
-	fmt.Println("Starting " + appName + "...")
+	start := time.Now().Nanosecond()
+	ct.Log.Println("Starting " + appName + "...")
 
 	conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
@@ -71,13 +74,14 @@ func main() {
 		}
 	}()
 
-	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+        ct.Log.Printf("Started %v in %v milliseconds\n", appName, time.Now().Nanosecond() - start)
+	ct.Log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 	<-forever
 }
 
 func failOnError(err error, msg string) {
 	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
+		ct.Log.Fatalf("%s: %s", msg, err)
 		panic(fmt.Sprintf("%s: %s", msg, err))
 	}
 }

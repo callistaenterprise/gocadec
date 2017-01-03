@@ -28,20 +28,21 @@ import (
 	ct "github.com/eriklupander/cloudtoolkit"
 	"github.com/spf13/viper"
 	"sync"
+	"time"
 )
 
 var appName = "imageservice"
 var configServerDefaultUrl = "http://configserver:8888"
 
 func main() {
+	start := time.Now().Nanosecond()
 	ct.LoadSpringCloudConfig(appName, ct.ResolveProfile(), configServerDefaultUrl)
 	ct.InitTracingFromConfigProperty(appName)
 	ct.Log.Println("Starting " + appName + "...")
 
 	go service.StartWebServer(viper.GetString("server_port")) // Starts HTTP service  (async)
 
-	// eeureka.Register(appName, "6767", "16767") // Performs Eureka registration
-
+	ct.Log.Printf("Started %v in %v milliseconds\n", appName, time.Now().Nanosecond() - start)
 	// Block...
 	wg := sync.WaitGroup{} // Use a WaitGroup to block main() exit
 	wg.Add(1)

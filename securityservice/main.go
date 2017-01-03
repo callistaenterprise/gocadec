@@ -28,6 +28,7 @@ import (
 	ct "github.com/eriklupander/cloudtoolkit"
 	"github.com/spf13/viper"
 	"sync"
+	"time"
 )
 
 var appName = "securityservice"
@@ -36,6 +37,8 @@ var configServerDefaultUrl = "http://configserver:8888"
 var amqpClient *ct.MessagingClient
 
 func main() {
+	start := time.Now().Nanosecond()
+
 	ct.Log.Println("Starting " + appName + "...")
 	ct.LoadSpringCloudConfig(appName, ct.ResolveProfile(), configServerDefaultUrl)
 	ct.InitTracingFromConfigProperty(appName)
@@ -44,9 +47,11 @@ func main() {
 	defer amqpClient.GetConn().Close()
 
 	ct.ConfigureHystrix([]string{"get_account_secured"}, amqpClient)
-	service.ConfigureClient() // Disable keep-alives so Docker Swarm can round-robin for us.
+	service.ConfigureHttpClient() // Disable keep-alives so Docker Swarm can round-robin for us.
 
 	go service.StartWebServer(viper.GetString("server_port")) // Starts HTTP service  (async)
+
+	ct.Log.Printf("Started %v in %v milliseconds\n", appName, time.Now().Nanosecond() - start)
 
 	// Block...
 	wg := sync.WaitGroup{} // Use a WaitGroup to block main() exit

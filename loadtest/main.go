@@ -19,10 +19,13 @@ import (
 
 var Log = logrus.New()
 
+var baseAddr string
+
 func main() {
 
 	usersPtr := flag.Int("users", 10, "Number of users")
 	delayPtr := flag.Int("delay", 1000, "Delay between calls per user")
+	baseAddr = *flag.String("baseAddr", "192.168.99.101", "Base address of your Swarm cluster")
 	flag.Parse()
 
 	users := *usersPtr
@@ -47,7 +50,7 @@ func getToken() string {
 	data.Add("scope", "webshop")
 	data.Add("username", "user")
 	data.Add("password", "password")
-	req, err := http.NewRequest("POST", "https://192.168.99.100:9999/uaa/oauth/token", bytes.NewBufferString(data.Encode()))
+	req, err := http.NewRequest("POST", "https://" + baseAddr + ":9999/uaa/oauth/token", bytes.NewBufferString(data.Encode()))
 	if err != nil {
 		panic(err.Error())
 	}
@@ -88,7 +91,7 @@ func securedTest() {
 	var token = getToken()
 	for {
 		accountId := rand.Intn(99) + 10000
-		url := "https://192.168.99.100:8765/api/account/" + strconv.Itoa(accountId)
+		url := "https://" + baseAddr + ":8765/api/account/" + strconv.Itoa(accountId)
 
 		req, _ := http.NewRequest("GET", url, nil)
 		req.Header.Add("Authorization", "Bearer "+token)
@@ -109,7 +112,7 @@ func standardTest() {
 
 	for {
 		accountId := rand.Intn(99) + 10000
-		url := "https://192.168.99.100:8765/api/account/" + strconv.Itoa(accountId)
+		url := "https://" + baseAddr + ":8765/api/account/" + strconv.Itoa(accountId)
 
 		var DefaultTransport http.RoundTripper = &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},

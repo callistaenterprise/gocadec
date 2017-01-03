@@ -9,7 +9,7 @@ import (
 
 var client = &http.Client{}
 
-func ConfigureClient() {
+func ConfigureHttpClient() {
 	var transport http.RoundTripper = &http.Transport{
 		DisableKeepAlives: true,
 	}
