@@ -32,16 +32,19 @@ import (
 )
 
 var appName = "securityservice"
+
 var configServerDefaultUrl = "http://configserver:8888"
+var authServerDefaultUrl = "https://authserver:9999/uaa/user"
 
 var amqpClient *ct.MessagingClient
 
 func main() {
-	start := time.Now().Nanosecond()
+	start := time.Now().UTC()
 
 	ct.Log.Println("Starting " + appName + "...")
 	ct.LoadSpringCloudConfig(appName, ct.ResolveProfile(), configServerDefaultUrl)
 	ct.InitTracingFromConfigProperty(appName)
+	ct.InitOAuth2HandlerUsingUrl(authServerDefaultUrl)
 
 	amqpClient = ct.InitMessagingClientFromConfigProperty()
 	defer amqpClient.GetConn().Close()
@@ -51,7 +54,7 @@ func main() {
 
 	go service.StartWebServer(viper.GetString("server_port")) // Starts HTTP service  (async)
 
-	ct.Log.Printf("Started %v in %v milliseconds\n", appName, time.Now().Nanosecond() - start)
+        ct.Log.Printf("Started %v in %v", appName, time.Now().UTC().Sub(start))
 
 	// Block...
 	wg := sync.WaitGroup{} // Use a WaitGroup to block main() exit

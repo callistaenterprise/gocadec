@@ -36,7 +36,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 		ImageData: imageBytes,
 		ImageUrl: string(accountImageUrl),
 		AccountServedBy: account.ServedBy,
-		ServedBy: ct.GetLocalIP(),
+		ImageServedBy: ct.GetLocalIP(),
 	}
 
 	json, _ := json.Marshal(userAccount)

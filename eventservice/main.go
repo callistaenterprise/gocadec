@@ -34,7 +34,7 @@ import (
 var appName = "eventservice"
 
 func main() {
-	start := time.Now().Nanosecond()
+	start := time.Now().UTC()
 	ct.Log.Println("Starting " + appName + "...")
 
 	conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
@@ -74,7 +74,7 @@ func main() {
 		}
 	}()
 
-        ct.Log.Printf("Started %v in %v milliseconds\n", appName, time.Now().Nanosecond() - start)
+	ct.Log.Printf("Started %v in %v", appName, time.Now().UTC().Sub(start))
 	ct.Log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 	<-forever
 }

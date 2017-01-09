@@ -25,7 +25,7 @@ func main() {
 
 	usersPtr := flag.Int("users", 10, "Number of users")
 	delayPtr := flag.Int("delay", 1000, "Delay between calls per user")
-	baseAddr = *flag.String("baseAddr", "192.168.99.101", "Base address of your Swarm cluster")
+	baseAddr = *flag.String("baseAddr", "192.168.99.100", "Base address of your Swarm cluster")
 	flag.Parse()
 
 	users := *usersPtr
@@ -91,7 +91,7 @@ func securedTest() {
 	var token = getToken()
 	for {
 		accountId := rand.Intn(99) + 10000
-		url := "https://" + baseAddr + ":8765/api/account/" + strconv.Itoa(accountId)
+		url := "https://" + baseAddr + ":8765/api/secured/account/" + strconv.Itoa(accountId)
 
 		req, _ := http.NewRequest("GET", url, nil)
 		req.Header.Add("Authorization", "Bearer "+token)
@@ -103,7 +103,9 @@ func securedTest() {
 			panic(err)
 		}
 		body, _ := ioutil.ReadAll(resp.Body)
-		Log.Println(string(body))
+		m := make(map[string]string)
+		json.Unmarshal(body, &m)
+		Log.Println("Account: " + m["accountServedBy"] + "\tComposite: " + m["imageServedBy"])
 		time.Sleep(time.Second * 1)
 	}
 }

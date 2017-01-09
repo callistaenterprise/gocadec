@@ -17,10 +17,12 @@ var configServerDefaultUrl = "http://configserver:8888"
 var amqpClient *ct.MessagingClient
 
 func main() {
-	start := time.Now().Nanosecond()
+	start := time.Now().UTC()
 	ct.Log.Println("Starting " + appName + "...")
+
 	// First of all, dump various hostname ips to log to see what mood the DNS resolver is in... :(
 	ct.DumpDNS()
+
 	ct.LoadSpringCloudConfig(appName, ct.ResolveProfile(), configServerDefaultUrl)
 	ct.InitTracingFromConfigProperty(appName)
 
@@ -35,7 +37,7 @@ func main() {
 	// Starts HTTP service  (async)
 	go service.StartWebServer(viper.GetString("server_port"))
 
-	ct.Log.Printf("Started %v in %v milliseconds\n", appName, time.Now().Nanosecond() - start)
+	ct.Log.Printf("Started %v in %v", appName, time.Now().UTC().Sub(start))
 	// Block...
 	wg := sync.WaitGroup{} // Use a WaitGroup to block main() exit
 	wg.Add(1)

@@ -6,7 +6,7 @@ type UserAccount struct {
         ImageData       []byte `json:"imageData"`
         ImageUrl        string  `json:"imageUrl"`
         AccountServedBy string `json:"accountServedBy"`
-        ServedBy        string  `json:"servedBy"`
+        ImageServedBy   string  `json:"imageServedBy"`
 }
 
 type Account struct {
