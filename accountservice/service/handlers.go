@@ -27,7 +27,7 @@ func GetAccount(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	ct.Log.Println("Done getting account " + account.Name)
+
 	// Enrich with IP of serving node
 	account.ServedBy = ct.GetLocalIP()
 	json, _ := json.Marshal(account)
