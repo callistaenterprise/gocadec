@@ -97,7 +97,7 @@ func GetAccountData(accountId string, span opentracing.Span) (model.Account, err
                 ct.AddTracingToReq(req, span)
                 resp, err := client.Do(req)
                 if err != nil {
-                        ct.Log.Errorln("Image service request returned error: " + err.Error())
+                        ct.Log.Errorln("Account service request returned error: " + err.Error())
                         return err
                 }
                 responseBody, err := ioutil.ReadAll(resp.Body)
@@ -122,6 +122,44 @@ func GetAccountData(accountId string, span opentracing.Span) (model.Account, err
         }
 }
 
+
+func GetQuotes(span opentracing.Span) (model.Quote, error) {
+
+        output := make(chan []byte, 1)
+
+        errors := hystrix.Go("get_quote", func() error {
+
+                req, _ := http.NewRequest("GET", "http://192.168.99.100:8080/api/quote", nil)
+                ct.AddTracingToReq(req, span)
+                resp, err := client.Do(req)
+                if err != nil {
+                        ct.Log.Errorln("Quote service request returned error: " + err.Error())
+                        return err
+                }
+                responseBody, err := ioutil.ReadAll(resp.Body)
+                if err != nil {
+                        ct.Log.Errorln("Error reading Quote response: " + err.Error())
+                        return err
+                }
+                output <- responseBody
+
+                // A bit ugly, return nil to indicate nothing bad happened.
+                return nil
+        }, func(err error) error {
+                output <- []byte("Every day, a new chance at failure.")
+                return nil
+        })
+
+        select {
+        case out := <-output:
+                var quote model.Quote
+                json.Unmarshal(out, &quote)
+                return quote, nil
+
+        case err := <-errors:
+                return model.Quote{}, err
+        }
+}
 
 
 

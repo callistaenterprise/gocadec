@@ -14,7 +14,7 @@ type Route struct {
 
 type Routes []Route
 
-var routes = Routes{
+var securedRoutes = Routes{
 
 	Route{
 		"SecuredGetAccount",
@@ -22,4 +22,16 @@ var routes = Routes{
 		"/account/{accountId}",
 		SecuredGetAccount,
 	},
+}
+
+var unsecuredRoutes = Routes{
+        Route{
+                "HealthCheck",
+                "GET",
+                "/health",
+                func(w http.ResponseWriter, r *http.Request) {
+                        w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
+                        w.Write([]byte("OK"))
+                },
+        },
 }

@@ -44,7 +44,7 @@ imageservice-*
 imageservice/testimages/bigdata.jpg
 imageservice/testimages/new2.jpg
 
-# securityservice
-# securityservice-*
+securityservice/securityservice
+securityservice/securityservice-*
 
 loadtest/loadtest

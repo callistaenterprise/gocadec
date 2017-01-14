@@ -29,6 +29,7 @@ import (
 	"github.com/streadway/amqp"
 	"time"
 	ct "github.com/eriklupander/cloudtoolkit"
+	"github.com/callistaenterprise/gocadec/eventservice/service"
 )
 
 var appName = "eventservice"
@@ -73,6 +74,8 @@ func main() {
 			log.Printf("Received a message: %s", d.Body)
 		}
 	}()
+
+	go service.StartWebServer("6868")
 
 	ct.Log.Printf("Started %v in %v", appName, time.Now().UTC().Sub(start))
 	ct.Log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
