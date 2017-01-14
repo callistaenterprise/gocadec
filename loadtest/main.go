@@ -105,7 +105,7 @@ func securedTest() {
 		body, _ := ioutil.ReadAll(resp.Body)
 		m := make(map[string]string)
 		json.Unmarshal(body, &m)
-		Log.Println("Account: " + m["accountServedBy"] + "\tComposite: " + m["imageServedBy"])
+		Log.Println("Account: " + m["accountServedBy"] + "\tComposite: " + m["imageServedBy"] + "\tQuote: " + m["quoteServedBy"])
 		time.Sleep(time.Second * 1)
 	}
 }
