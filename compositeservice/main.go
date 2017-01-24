@@ -6,8 +6,13 @@ import (
 	"github.com/callistaenterprise/gocadec/compositeservice/service"
 	ct "github.com/eriklupander/cloudtoolkit"
 	"github.com/spf13/viper"
-	"sync"
+	"log"
+	"os"
+	"runtime/pprof"
 	"time"
+        "sync"
+        "os/signal"
+        "syscall"
 )
 
 var appName = "compservice"
@@ -20,10 +25,13 @@ var profile string
 
 var amqpClient *ct.MessagingClient
 
+var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
+
 func main() {
 	start := time.Now().UTC()
 	ct.Log.Println("Starting " + appName + "...")
 	parseFlags()
+	initProfilingIfEnabled()
 	// Comment in the line below to dump various hostname ips to log to see what mood the DNS resolver is in...
 	// ct.DumpDNS()
 
@@ -47,6 +55,28 @@ func main() {
 	wg := sync.WaitGroup{} // Use a WaitGroup to block main() exit
 	wg.Add(1)
 	wg.Wait()
+}
+func initProfilingIfEnabled() {
+        if *cpuprofile != "" {
+                f, err := os.Create(*cpuprofile)
+                if err != nil {
+                        log.Fatal(err)
+                }
+                pprof.StartCPUProfile(f)
+                handleSigterm()
+        }
+}
+
+// Handles Ctrl+C gracefully, e.g. dumping CPU profiling to disk before exiting.
+func handleSigterm() {
+        c := make(chan os.Signal, 1)
+        signal.Notify(c, os.Interrupt)
+        signal.Notify(c, syscall.SIGTERM)
+        go func() {
+                <-c
+                pprof.StopCPUProfile()
+                os.Exit(1)
+        }()
 }
 
 func parseFlags() {

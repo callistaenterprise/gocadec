@@ -129,7 +129,7 @@ func GetQuotes(span opentracing.Span) (model.Quote, error) {
 
         errors := hystrix.Go("get_quote", func() error {
 
-                req, _ := http.NewRequest("GET", "http://192.168.99.100:8080/api/quote", nil)
+                req, _ := http.NewRequest("GET", "http://quotes-service:8080/api/quote", nil)
                 ct.AddTracingToReq(req, span)
                 resp, err := client.Do(req)
                 if err != nil {
@@ -166,7 +166,7 @@ func GetQuotes(span opentracing.Span) (model.Quote, error) {
 func GetData(accountId string) ([]byte, error) {
 
         output := make(chan []byte, 1)
-        errors := hystrix.Go("get_data", func() error {
+        errors := hystrix.Go("get_account", func() error {
                 output <- getData(accountId)
                 return nil
         }, func(err error) error {

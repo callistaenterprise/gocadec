@@ -34,6 +34,7 @@ accountservice-*
 
 compositeservice/compositeservice
 compositeservice/compositeservice-*
+compositeservice/prof*
 
 # eventservice
 eventservice-linux-amd64
@@ -48,3 +49,6 @@ securityservice/securityservice
 securityservice/securityservice-*
 
 loadtest/loadtest
+
+healthchecker/healthchecker
+healthchecker/healthchecker-linux-amd64
